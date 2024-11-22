@@ -1,21 +1,14 @@
 import { useEffect, useState } from 'react'
 import './style.css'
 import { serverRequest } from './wrapper'
-import { useAppDispatch, useAppSelector, useDebounce } from '../hooks'
-import { setServerData } from '../serverResponseReducer'
+import { useAppDispatch, useAppSelector, useDebounce } from './hooks'
+import { setServerData } from './serverResponseReducer'
 import { IServerResponse } from './types'
 import { Dispatch, ThunkDispatch, UnknownAction } from '@reduxjs/toolkit'
 
-function MyInput({
-  val,
-  stateSetter,
-  serverResponse,
-  dispatch,
-  setSelectedItem,
-}: {
+interface IMyInputProps {
   val: string
   stateSetter: React.Dispatch<React.SetStateAction<string>>
-  setSelectedItem: React.Dispatch<React.SetStateAction<IServerResponse>>
   serverResponse: IServerResponse[]
   dispatch: ThunkDispatch<
     {
@@ -27,7 +20,10 @@ function MyInput({
     UnknownAction
   > &
     Dispatch<UnknownAction>
-}) {
+  setSelectedItem: React.Dispatch<React.SetStateAction<IServerResponse>>
+}
+
+function MyInput({ val, stateSetter, serverResponse, dispatch, setSelectedItem }: IMyInputProps) {
   const debouncedValue = useDebounce(val)
 
   useEffect(() => {
@@ -39,7 +35,6 @@ function MyInput({
           console.log('Запрос', debouncedValue)
           if (currentItem) dispatch(setServerData(currentItem))
         }
-        console.log(currentItem)
         setSelectedItem(currentItem || ({} as IServerResponse))
       }
 
